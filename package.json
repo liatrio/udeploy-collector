@@ -16,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "4.13.1",
-    "promise": "^7.1.1"
+    "promise": "^7.1.1",
+    "requestify": "^0.1.17"
   },
   "devDependencies": {
     "nodemon": "^1.9.2"
