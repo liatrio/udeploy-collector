@@ -1,0 +1,24 @@
+{
+  "name": "udeploy-collector",
+  "version": "0.0.1",
+  "description": "This is a hygieia collector written in nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha "
+  },
+  "keywords": [
+    "Hygieia",
+    "nodejs",
+    "UCD",
+    "udeploy"
+  ],
+  "author": "Benjamin Stein",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "4.13.1",
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.9.2"
+  }
+}
