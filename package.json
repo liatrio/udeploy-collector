@@ -2,7 +2,7 @@
   "name": "udeploy-collector",
   "version": "0.0.1",
   "description": "This is a hygieia collector written in nodejs",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "mocha "
   },
