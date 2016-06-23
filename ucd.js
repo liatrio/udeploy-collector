@@ -67,9 +67,19 @@ Ucd.prototype.getComponentsInEnvironment = function(application, environment) {
     });
 };
 
-//Ucd.prototype.getEnvironmentResourceStatusData = function(application, environment) {
-//    var environmentStatuses =
-//}
+Ucd.prototype.getEnvironmentResourceStatusData = function(data) {
+    var application = data.application;
+    var environment = data.environment;
+    var environmentStatuses = [];
+
+    var componentInformationpath = "rest/deploy/" + environment.id + "/latestDesiredInventory";
+    return makeUcdGetRequest(componentInformationpath).then(function(components) {
+        _.each(components,function(component) {
+
+        });
+    });
+
+};
 
 var makeUcdGetRequest = function(path) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
