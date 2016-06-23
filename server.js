@@ -2,19 +2,32 @@
 
 var http = require('http');
 var ucd = require('./ucd');
-var _ = require('lodash');
 
-var server = http.createServer(function (request, response) {
 
-    ucd.getApplications().then(function(applications) {
-        if(_.isEmpty(applications))
-            console.log("boom");
+http.createServer(function (request, response) {
+    //return ucd.getEnvironmentsForApplication().then(function (environments) {
+    //    if (_.isEmpty(environments))
+    //        console.log("boom");
+    //    response.writeHead(200, {"Content-Type": "text/plain"});
+    //    var environmentResponseObj = JSON.stringify({ environments: environments}) + "\n";
+    //    console.log(environmentResponseObj);
+    //    response.end(environmentResponseObj);
+    //    return response;
+    //});
+
+    //return ucd.getApplications().then(function (applications) {
+    //    response.writeHead(200, {"Content-Type": "text/plain"});
+    //    var environmentResponseObj = JSON.stringify({ applications: applications}) + "\n";
+    //    console.log(environmentResponseObj);
+    //    response.end(environmentResponseObj);
+    //    return response;
+    //});
+    return ucd.getComponentsInEnvironment().then(function(components) {
         response.writeHead(200, {"Content-Type": "text/plain"});
-        response.end("Hello World\n");
+        var componentResponseObj = JSON.stringify({components: components });
+        response.end(componentResponseObj);
+        return response;
     });
-
-});
-
-server.listen(8000);
+}).listen(8000);
 
 console.log("Server running at localhost:8000/");
