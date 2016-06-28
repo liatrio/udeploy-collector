@@ -13,13 +13,14 @@
     "udeploy"
   ],
   "author": "Benjamin Stein",
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/liatrio/udeploy-collector.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liatrio/udeploy-collector.git"
   },
   "license": "ISC",
   "dependencies": {
     "lodash": "4.13.1",
+    "mongoose": "^4.5.2",
     "promise": "^7.1.1",
     "requestify": "^0.1.17"
   },
