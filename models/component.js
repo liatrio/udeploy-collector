@@ -1,7 +1,6 @@
 'use strict';
-var schemas = require('./../schemas'),
-    _ = require('lodash'),
-    db = require('../db');
+var _ = require('lodash'),
+    schemas = require('./../ucdSchema');
 
 var Component = function (data) {
     this.data = this.prepData(data);
@@ -24,13 +23,4 @@ Component.prototype.sanitize = function (data) {
     var schema = schemas.component;
     return _.pick(_.defaults(data, schema), _.keys(schema));
 };
-
-Component.findById = function () {
-};
-Component.insertOne = function () {
-};
-Component.delete = function (data) {
-
-};
-
 module.exports = Component;
