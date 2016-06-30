@@ -3,7 +3,7 @@ var http = require('http');
 var Promise = require('promise');
 var _ = require('lodash');
 var requestify = require('requestify');
-//var UcdApplication = require('./models/application.js');
+var UcdComponent = require('./models/component');
 
 var applicationUrl = "rest/deploy/application/";
 var ucdServer = process.env.ucdUrl || 'localhost:8080';
@@ -68,15 +68,25 @@ Ucd.prototype.getComponentsInEnvironment = function(application, environment) {
 };
 
 Ucd.prototype.getEnvironmentResourceStatusData = function(data) {
-    var application = data.application;
+    if(_.isEmpty(data) || !_.isString())
+        throw new Error("Missing Required fields: ");
+
+        var application = data.application;
     var environment = data.environment;
     var environmentStatuses = [];
 
-    var componentInformationpath = "rest/deploy/" + environment.id + "/latestDesiredInventory";
-    return makeUcdGetRequest(componentInformationpath).then(function(components) {
-        _.each(components,function(component) {
-
+    var componentInformationPath = "rest/deploy/environment/" + environment.id + "/latestDesiredInventory";
+    return makeUcdGetRequest(componentInformationPath).then(function(response) {
+        _.each(response.getBody(),function(component) {
+            var status = new UcdComponent(component);
+            environmentStatuses.push(status);
         });
+        console.log(environmentStatuses);
+        return Promise.resolve(environmentStatuses);
+    }).catch(function(err) {
+        console.log("Request failed");
+        console.log(err);
+        return Promise.reject("fail");
     });
 
 };
@@ -93,6 +103,7 @@ var makeUcdGetRequest = function(path) {
         }
     };
     var requestUrl = ucdServer + path;
+    console.log("Request Url: " + requestUrl);
     return requestify.request(requestUrl, ucdApplicationRequest);
 };
 
