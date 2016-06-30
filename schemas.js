@@ -10,8 +10,9 @@ schemas = {
     },
     component: {
         id: null,
-        name: null,
+        componentName: null,
         version: null,
+        collectorItemId: null,
         environmentId: null,
         environmentName: null,
         environmentUrl: null,
