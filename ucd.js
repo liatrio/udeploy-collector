@@ -1,14 +1,16 @@
 "use strict";
-var http = require('http');
-var Promise = require('promise');
-var _ = require('lodash');
-var requestify = require('requestify');
-var UcdComponent = require('./models/component');
-
-var applicationUrl = "rest/deploy/application/";
-var ucdServer = process.env.ucdUrl || 'localhost:8080';
-var authToken = process.env.authToken;
-var Ucd =  function() {};
+var http = require('http'),
+    Promise = require('promise'),
+    _ = require('lodash'),
+    requestify = require('requestify'),
+    UcdComponent = require('./models/component'),
+    applicationUrl = "rest/deploy/application/",
+    ucdServer = process.env.ucdUrl || 'localhost:8080',
+    authToken = process.env.authToken,
+    ucdApplication = require('./models/application'),
+    component = require('./models/component'),
+    environment = require('./models/environment'),
+    Ucd =  function() {};
 
 
 
@@ -31,12 +33,11 @@ Ucd.prototype.getApplications = function() {
     var applications = [];
     return makeUcdGetRequest("cli/" + "application").then(function(response) {
         _.each(response.getBody(), function(application) {
-            var ucdApplication = {};
-            ucdApplication.name = application.name;
-            ucdApplication.id = application.id;
-            ucdApplication.instanceUrl = ucdServer;
-            applications.push(ucdApplication);
+            var app = new ucdApplication(application);
+            console.log(app);
+            applications.push(app);
         });
+
         return Promise.resolve(applications);
     }).catch(function(err) {
         console.log("Request failed");
