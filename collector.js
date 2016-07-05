@@ -1,28 +1,30 @@
 "use strict";
 //gets and saves everything
 var _ = require('lodash'),
-    dataService = require('./ucdDataService'),
+    Promise = require('promise'),
+    DataService = require('./ucdDataService'),
     Db = require('./db'),
     Collector = function() {};
 
 Collector.prototype.collectAndSave = function() {
-    collect();
-    log
-    transform();
-    log
-    save();
-    log
-}
+    return collect.then(function(data) {
+        console.log(data);
+        return transform(data);
+    }).then(function(data) {
+        console.log(data);
+        return save(data);
+    });
 
-module.exports = Collector;
+};
 
 var collect = function(){
-    var getApplications = dataService.collect();
-    //var get...
-    //var get1()
-
+    return DataService.collect();
+};
+var transform = function() {
+  return Promise.resolve();
 };
 
 var save = function() {
     var db = new Db();
-}
+};
+module.exports = Collector;
