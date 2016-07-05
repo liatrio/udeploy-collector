@@ -11,7 +11,7 @@ CollectorItem.prototype.data = {};
 
 CollectorItem.prototype.sanitize = function (data) {
     data = data || {};
-    var schema = schemas.component;
+    var schema = schemas.collectorItem;
     return _.pick(_.defaults(data, schema), _.keys(schema));
 };
 
