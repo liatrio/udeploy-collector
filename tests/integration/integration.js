@@ -1,6 +1,6 @@
 "use strict";
 var assert = require('assert'),
-    DB = require("../db"),
+    DB = require("../../db"),
     Promise = require('promise'),
     base_url = "http://localhost:3000/";
 
@@ -17,14 +17,15 @@ describe("DB tests", function() {
                 return Promise.resolve(result);
             });
         });
-
-        it.only("delete all test data", function() {
+        it("delete all test data", function() {
            var data = {
                    name : 'testComponent' ,
                    environmentName : 'testEnvironment'
            };
             var db = new DB('components');
-            return db.delete(data).then(function(result) {
+            return db.findOne(data).then(function(result) {
+              return db.delete(data);
+            }).then(function(result) {
                 console.log(result);
                 return Promise.resolve(result);
             });
