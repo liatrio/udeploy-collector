@@ -36,7 +36,7 @@ var getCollector = function() {
         return Promise.resolve(result);
     }).catch(function(err) {
         console.log(err);
-        console.log("unable to get collector id")
+        console.log("unable to get collector id");
         return Promise.reject(err);
     })
 };

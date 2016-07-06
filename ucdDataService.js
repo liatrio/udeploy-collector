@@ -7,21 +7,20 @@ var http = require('http'),
     applicationUrl = "rest/deploy/application/",
     ucdServer = process.env.ucdUrl || 'localhost:8080',
     authToken = process.env.authToken,
-    ucdApplication = require('./models/application'),
+    UcdApplication = require('./models/application'),
     component = require('./models/component'),
     Environment = require('./models/environment'),
-    ColletorItem = require('./models/collectorItem'),
+    CollectorItem = require('./models/collectorItem'),
     Ucd = function () {};
 
 
 Ucd.collect = function (collectorId) {
     var ucd = new Ucd();
     var collectorItems = [];
-    //var
     return ucd.getApplications().then(function (applications) {
         return Promise.all(
             _.map(applications, function (application) {
-                var collectorItem = new ColletorItem(application);
+                var collectorItem = new CollectorItem(application);
                 collectorItem.data._id = collectorId || "1234";
                 collectorItems.push(collectorItem);
                 var environmentsForApplication = [];
@@ -42,6 +41,9 @@ Ucd.collect = function (collectorId) {
         console.log("REST failure", err);
         return Promise.reject();
     });
+};
+Ucd.prototype.getCollectorItems = function() {
+    return this.getApplications();
 };
 
 Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
@@ -64,7 +66,7 @@ Ucd.prototype.getApplications = function () {
     var applications = [];
     return makeUcdGetRequest("cli/" + "application").then(function (response) {
         _.each(response.getBody(), function (application) {
-            var app = new ucdApplication(application);
+            var app = new UcdApplication(application);
             applications.push(app);
         });
         return Promise.resolve(applications);

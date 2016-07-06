@@ -10,7 +10,11 @@ var Application = function (data) {
 Application.prototype.data = {};
 
 Application.prototype.prepData = function (data) {
-
+    data.options = {};
+    data.applicationId = id;
+    data.applicationName = name;
+    data.instanceUrl =  process.env.ucdUrl;
+    return data;
 };
 Application.prototype.sanitize = function (data) {
     data = data || {};
