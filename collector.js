@@ -43,8 +43,7 @@ var getCollector = function() {
 };
 
 var getCollectorItems = function(collector) {
-    console.log(collector);
-    return dataService.getCollectorItems();
+    return dataService.getCollectorItems(collector);
 }
 
 var updateCollectorItems = function(collectorItems) {
