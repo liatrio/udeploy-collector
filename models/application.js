@@ -10,9 +10,10 @@ var Application = function (data) {
 Application.prototype.data = {};
 
 Application.prototype.prepData = function (data) {
+    //console.log(data);
     data.options = {};
-    data.applicationId = id;
-    data.applicationName = name;
+    data.applicationId = data.id;
+    data.applicationName = data.name;
     data.instanceUrl =  process.env.ucdUrl;
     return data;
 };
