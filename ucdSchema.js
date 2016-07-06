@@ -22,14 +22,17 @@ schemas = {
         environments: null
     },
     collectorItem : {
-        _id: null,
         description: null,
         enabled: null,
         pushed: null,
-        collectorId: null
+        collectorId: null,
+        options: {
+            applicationId: null,
+            applicationName: null,
+            instanceUrl: null
+        }
     },
     collector: {
-        _id: null,
         udeployServers : null,
         name: null,
         collectorType: null,
@@ -38,7 +41,6 @@ schemas = {
         lastExecuted: null
     },
     environmentStatus: {
-        _id: null,
         collectorItemId: null,
         environmentName: null,
         componentName: null,
