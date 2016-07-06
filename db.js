@@ -1,22 +1,35 @@
 'use strict';
-var mongo = require('promised-mongo');
-var Promise = require('promise');
-var url = process.env.mongoURL || "mongodb://localhost:27017/dashboard";
-var db = mongo(url);
+var mongo = require('promised-mongo'),
+    Promise = require('promise'),
+    moment = require('moment'),
+    _ = require('lodash'),
+    url = process.env.mongoURL || "mongodb://localhost:27017/dashboard",
+    constants = require('./constants'),
+    db = mongo(url);
 
 var Db = function (document) {
     this.connection = db.collection(document);
 };
 
+Db.prototype.upsertByName = function (data) {
+    return this.connection.update({name: data.name }, data, {upsert: true});
+};
+
 Db.prototype.insertOne = function (data) {
     return this.connection.insert(data).then(function (result) {
-        return Promise.resolve(result._id);
+        return Promise.resolve( {id: result._id} );
     }).catch(function (err) {
         console.log("Well...something went wrong");
         return Promise.reject(err);
     });
 };
 
+Db.prototype.update = function (data) {
+    return this.connection.update(object, where).catch(function () {
+        console.log("Well...something went wrong");
+        return Promise.reject(err);
+    });
+};
 Db.prototype.delete = function (data) {
     console.log("Deleting where: ", data);
     return this.connection.remove(data).catch(function (err) {
@@ -33,7 +46,7 @@ Db.prototype.findOne = function (data) {
         return Promise.reject(err);
     });
 };
-Db.prototype.find = function(data) {
+Db.prototype.find = function (data) {
     console.log("Find all where: ", data);
     return this.connection.find(data).catch(function (err) {
         console.log("Find db method failed");
@@ -43,7 +56,7 @@ Db.prototype.find = function(data) {
 
 Db.prototype.findById = function (data) {
     var search = {};
-    if(data._id)
+    if (data._id)
         search._id = data._id;
     else
         search = {_id: mongo.ObjectId(data.id)};
