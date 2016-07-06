@@ -35,7 +35,6 @@ var getCollector = function() {
         return db.findOne({name: collector.name})
     }).then(function(result){
         collectorId = result._id;
-        console.log("RESULT",result);
         return Promise.resolve(result);
     }).catch(function(err) {
         console.log("unable to get collector id");

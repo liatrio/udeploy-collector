@@ -24,9 +24,7 @@ Ucd.collect = function (collectorId) {
                 collectorItem.data._id = collectorId || "1234";
                 collectorItems.push(collectorItem);
                 var environmentsForApplication = [];
-                return ucd.getEnvironmentsForApplication(application.data.id).then(function(environments) {
-
-                });
+                return ucd.getEnvironmentsForApplication(application.data.id);
             })
         ).then(function(data) {
             //return Promise.all(
@@ -34,7 +32,7 @@ Ucd.collect = function (collectorId) {
             //
             //    })
             //);
-            console.log(data[0]);
+            //console.log(data[0]);
             return Promise.resolve("bam");
         });
     }).catch(function (err) {
@@ -43,11 +41,22 @@ Ucd.collect = function (collectorId) {
     });
 };
 Ucd.prototype.getCollectorItems = function() {
-    return this.getApplications();
+    var applications = [];
+    return makeUcdGetRequest("cli/" + "application").then(function (response) {
+        _.each(response.getBody(), function (application) {
+            var app = new UcdApplication(application);
+            applications.push(app);
+        });
+        //console.log(applications)
+        return Promise.resolve(applications);
+    }).catch(function (err) {
+        console.log(err);
+        return Promise.reject("Unable to get collector Items");
+    });
 };
 
 Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
-    console.log(applicationId);
+    //console.log(applicationId);
     var environments = [];
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     return makeUcdGetRequest(applicationUrl + applicationId + "/environments/false").then(function (response) {
@@ -69,6 +78,7 @@ Ucd.prototype.getApplications = function () {
             var app = new UcdApplication(application);
             applications.push(app);
         });
+        //console.log(applications)
         return Promise.resolve(applications);
     }).catch(function (err) {
         console.log("Request failed");
@@ -113,7 +123,7 @@ Ucd.prototype.getEnvironmentResourceStatusData = function (data) {
             var status = new UcdComponent(component);
             environmentStatuses.push(status);
         });
-        console.log(environmentStatuses);
+        //console.log(environmentStatuses);
         return Promise.resolve(environmentStatuses);
     }).catch(function (err) {
         console.log("Request failed");
@@ -135,7 +145,7 @@ var makeUcdGetRequest = function (path) {
         }
     };
     var requestUrl = ucdServer + path;
-    console.log("Request Url: " + requestUrl);
+    //console.log("Request Url: " + requestUrl);
     return requestify.request(requestUrl, ucdApplicationRequest);
 };
 
