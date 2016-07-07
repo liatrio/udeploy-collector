@@ -60,7 +60,9 @@ Db.prototype.findOne = function (data) {
 };
 Db.prototype.find = function (data) {
     console.log("Find all where: ", data);
-    return this.connection.find(data).catch(function (err) {
+    return this.connection.find(data).then(function(result) {
+        return Promise.resolve(result);
+    }).catch(function (err) {
         console.log("Find db method failed");
         return Promise.reject(err);
     });
@@ -76,6 +78,9 @@ Db.prototype.findById = function (data) {
         console.log("Find by id method failed");
         return Promise.reject(err);
     });
+};
+Db.convertToObjectId = function(id) {
+  return mongo.ObjectId(id);
 };
 
 module.exports = Db;
