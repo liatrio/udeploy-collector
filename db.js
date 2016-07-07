@@ -2,7 +2,6 @@
 var mongo = require('promised-mongo'),
     Promise = require('promise'),
     moment = require('moment'),
-    _ = require('lodash'),
     url = process.env.mongoURL || "mongodb://localhost:27017/dashboard",
     constants = require('./constants'),
     db = mongo(url);
@@ -16,9 +15,6 @@ Db.prototype.upsertByName = function (data) {
     return this.connection.update({name: data.name }, data, {upsert: true});
 };
 
-Db.prototype.bulkInsert = function(data) {
-  return this.connection.insert(data);
-};
 Db.prototype.insertOne = function (data) {
     console.log("Inserting one:", data);
     return this.connection.insert(data).then(function (result) {
@@ -64,18 +60,6 @@ Db.prototype.find = function (data) {
         return Promise.resolve(result);
     }).catch(function (err) {
         console.log("Find db method failed");
-        return Promise.reject(err);
-    });
-};
-
-Db.prototype.findById = function (data) {
-    var search = {};
-    if (data._id)
-        search._id = data._id;
-    else
-        search = {_id: mongo.ObjectId(data.id)};
-    return this.connection.findOne(search).catch(function (err) {
-        console.log("Find by id method failed");
         return Promise.reject(err);
     });
 };
