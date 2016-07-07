@@ -53,15 +53,25 @@ var updateCollectorItems = function (collectorItems) {
     return Promise.all(
         _.map(collectorItems, function (item) {
             item.data.lastUpdated = moment.now();
-            console.log("Upserting where description: " + item.data.description );
             return db.upsert( { description: item.data.description }, item.data );
-        })).then(function () {
-        return Promise.resolve(collectorItems);
+        })
+    ).then(function () {
+        return db.find( {collectorId: Db.convertToObjectId(collectorId) });
+    }).then(function(collectorItems) {
+        //make a hashmap of name and id
+        var hashMap = [];
+        _.each(collectorItems, function(item) {
+            hashMap[item.description] = item._id;
+        });
+        return Promise.resolve(hashMap);
+    }).catch(function(err) {
+        console.log("Collector items did not update correctly");
+        return Promise.reject(err);
     });
 
 };
 
-var collect = function () {
+var collect = function (data) {
     return Promise.resolve();
     //return new DataService.collect();
 };
