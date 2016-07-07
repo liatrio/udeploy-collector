@@ -22,12 +22,11 @@ Collector.prototype.collectAndSave = function () {
 };
 
 var getCollector = function () {
-    var udeployServers = [];
-    udeployServers[0] = process.env.ucdUrl || "empty";
+    console.log("servers: " + dataService.getServers());
     var collector = {};
     collector.name = constants.COLLECTOR_NAME;
     collector.collectorType = constants.COLLECTOR_TYPE;
-    collector.udeployServers = udeployServers;
+    collector[constants.SERVER_TYPE] = dataService.getServers();
     collector.enabled = true;
     collector.online = true;
     collector.lastExecuted = moment.now();

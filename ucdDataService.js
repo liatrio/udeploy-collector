@@ -133,6 +133,11 @@ Ucd.prototype.getEnvironmentResourceStatusData = function (data) {
     });
 
 };
+Ucd.prototype.getServers = function() {
+    var ucdServers = [];
+    ucdServers[0] = ucdServer;
+    return ucdServers;
+};
 
 var makeUcdGetRequest = function (path) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
