@@ -12,10 +12,15 @@ var Db = function (document) {
 };
 
 Db.prototype.upsertByName = function (data) {
+    console.log("Upserting: ", data);
     return this.connection.update({name: data.name }, data, {upsert: true});
 };
 
+Db.prototype.bulkInsert = function(data) {
+  return this.connection.insert(data);
+};
 Db.prototype.insertOne = function (data) {
+    console.log("Inserting one:", data);
     return this.connection.insert(data).then(function (result) {
         return Promise.resolve( {id: result._id} );
     }).catch(function (err) {
@@ -24,9 +29,16 @@ Db.prototype.insertOne = function (data) {
     });
 };
 
-Db.prototype.update = function (data) {
-    return this.connection.update(object, where).catch(function () {
-        console.log("Well...something went wrong");
+Db.prototype.update = function ( content, where ) {
+    return this.connection.update( content, where ).catch(function (err) {
+        console.log("Well...something went wrong",err);
+        return Promise.reject(err);
+    });
+};
+
+Db.prototype.upsert = function ( content, where ) {
+    return this.connection.update( content, where, {upsert: true} ).catch(function (err) {
+        console.log("Well...something went wrong",err);
         return Promise.reject(err);
     });
 };
