@@ -40,14 +40,15 @@ Ucd.collect = function (collectorId) {
         return Promise.reject();
     });
 };
-Ucd.prototype.getCollectorItems = function() {
+Ucd.prototype.getCollectorItems = function(collector) {
     var applications = [];
     return makeUcdGetRequest("cli/" + "application").then(function (response) {
         _.each(response.getBody(), function (application) {
-            var app = new UcdApplication(application);
+            application.collectorId = collector._id;
+            var app = new CollectorItem(application);
+            app.data.options.instanceUrl = ucdServer;
             applications.push(app);
         });
-        //console.log(applications)
         return Promise.resolve(applications);
     }).catch(function (err) {
         console.log(err);

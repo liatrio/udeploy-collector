@@ -26,6 +26,7 @@ schemas = {
         enabled: null,
         pushed: null,
         collectorId: null,
+        lastUpdated: null,
         options: {
             applicationId: null,
             applicationName: null,
