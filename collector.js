@@ -1,17 +1,18 @@
 "use strict";
 var Promise = require('promise'),
     moment = require('moment'),
+    _ = require('lodash'),
     DataService = require('./ucdDataService'),
     Db = require('./db'),
     constants = require('./constants'),
     collectorId = null,
     dataService = null,
     collectorObj = require('./models/collector'),
-    Collector = function() {
+    Collector = function () {
         dataService = new DataService();
     };
 
-Collector.prototype.collectAndSave = function() {
+Collector.prototype.collectAndSave = function () {
     return getCollector()
         .then(getCollectorItems)
         .then(updateCollectorItems)
@@ -20,7 +21,7 @@ Collector.prototype.collectAndSave = function() {
         .then(save);
 };
 
-var getCollector = function() {
+var getCollector = function () {
     var udeployServers = [];
     udeployServers[0] = process.env.ucdUrl || "empty";
     var collector = {};
@@ -31,39 +32,45 @@ var getCollector = function() {
     collector.online = true;
     collector.lastExecuted = moment.now();
     var db = new Db('collectors');
-    return db.upsertByName( new collectorObj(collector).data ).then(function(result) {
+    return db.upsertByName(new collectorObj(collector).data).then(function (result) {
         return db.findOne({name: collector.name})
-    }).then(function(result){
+    }).then(function (result) {
         collectorId = result._id;
         return Promise.resolve(result);
-    }).catch(function(err) {
+    }).catch(function (err) {
         console.log("unable to get collector id");
         return Promise.reject(err);
     })
 };
 
-var getCollectorItems = function(collector) {
+var getCollectorItems = function (collector) {
     return dataService.getCollectorItems(collector);
-}
-
-var updateCollectorItems = function(collectorItems) {
-    console.log("Collector Items", collectorItems);
-    //get all collector items from database
-    //compare to collectorItems in ucd
-    //update database list
-    return Promise.resolve(collectorItems);
 };
 
-var collect = function(){
+var updateCollectorItems = function (collectorItems) {
+    var db = new Db('collector_items');
+    console.log("Update collector items");
+    return Promise.all(
+        _.map(collectorItems, function (item) {
+            item.data.lastUpdated = moment.now();
+            console.log("Upserting where description: " + item.data.description );
+            return db.upsert( { description: item.data.description }, item.data );
+        })).then(function () {
+        return Promise.resolve(collectorItems);
+    });
+
+};
+
+var collect = function () {
     return Promise.resolve();
     //return new DataService.collect();
 };
-var transform = function() {
+var transform = function () {
 
-  return Promise.resolve();
+    return Promise.resolve();
 };
 
-var save = function(data) {
+var save = function (data) {
     console.log("saving")
     //var db = new Db(data.document);
     return Promise.resolve();

@@ -4,11 +4,23 @@ var _ = require('lodash'),
 
 
 var CollectorItem = function (data) {
+    this.data = this.prepData(data);
     this.data = this.sanitize(data);
 };
 
 CollectorItem.prototype.data = {};
 
+CollectorItem.prototype.prepData = function(data) {
+    //console.log(data);
+    data.options = {};
+    data.options.applicationId = data.id;
+    data.options.applicationName = data.name;
+    data.description = data.name;
+    data.enabled = true;
+    data.pushed = true;
+    data.instanceUrl =  process.env.ucdUrl;
+    return data;
+};
 CollectorItem.prototype.sanitize = function (data) {
     data = data || {};
     var schema = schemas.collectorItem;

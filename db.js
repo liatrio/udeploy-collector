@@ -36,8 +36,8 @@ Db.prototype.update = function ( content, where ) {
     });
 };
 
-Db.prototype.upsert = function ( content, where ) {
-    return this.connection.update( content, where, {upsert: true} ).catch(function (err) {
+Db.prototype.upsert = function ( where, content ) {
+    return this.connection.update( where, content, {upsert: true} ).catch(function (err) {
         console.log("Well...something went wrong",err);
         return Promise.reject(err);
     });
