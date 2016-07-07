@@ -58,7 +58,7 @@ var updateCollectorItems = function (collectorItems) {
         return db.find({collectorId: Db.convertToObjectId(collectorId)});
     }).then(function (collectorItems) {
         //make a hashmap of name and id
-        var hashMap = [];
+        var hashMap = {};
         _.each(collectorItems, function (item) {
             hashMap[item.description] = item._id;
         });
@@ -69,9 +69,8 @@ var updateCollectorItems = function (collectorItems) {
     });
 };
 
-var collect = function () {
-    return Promise.resolve();
-    //return new DataService.collect();
+var collect = function (data) {
+    return dataService.collect(data);
 };
 var transform = function () {
 
