@@ -32,7 +32,7 @@ var getCollector = function () {
     collector.online = true;
     collector.lastExecuted = moment.now();
     var db = new Db('collectors');
-    return db.upsertByName(new collectorObj(collector).data).then(function (result) {
+    return db.upsertByName(new collectorObj(collector).data).then(function () {
         return db.findOne({name: collector.name})
     }).then(function (result) {
         collectorId = result._id;
@@ -53,25 +53,24 @@ var updateCollectorItems = function (collectorItems) {
     return Promise.all(
         _.map(collectorItems, function (item) {
             item.data.lastUpdated = moment.now();
-            return db.upsert( { description: item.data.description }, item.data );
+            return db.upsert({description: item.data.description}, item.data);
         })
     ).then(function () {
-        return db.find( {collectorId: Db.convertToObjectId(collectorId) });
-    }).then(function(collectorItems) {
+        return db.find({collectorId: Db.convertToObjectId(collectorId)});
+    }).then(function (collectorItems) {
         //make a hashmap of name and id
         var hashMap = [];
-        _.each(collectorItems, function(item) {
+        _.each(collectorItems, function (item) {
             hashMap[item.description] = item._id;
         });
         return Promise.resolve(hashMap);
-    }).catch(function(err) {
+    }).catch(function (err) {
         console.log("Collector items did not update correctly");
         return Promise.reject(err);
     });
-
 };
 
-var collect = function (data) {
+var collect = function () {
     return Promise.resolve();
     //return new DataService.collect();
 };
@@ -80,8 +79,8 @@ var transform = function () {
     return Promise.resolve();
 };
 
-var save = function (data) {
-    console.log("saving")
+var save = function () {
+    console.log("saving");
     //var db = new Db(data.document);
     return Promise.resolve();
     //return db.insertOne(data);
