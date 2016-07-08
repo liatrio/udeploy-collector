@@ -60,7 +60,7 @@ var updateCollectorItems = function (collectorItems) {
         //make a hashmap of name and id
         var hashMap = {};
         _.each(collectorItems, function (item) {
-            hashMap[item.description] = item._id;
+            hashMap[item.options.applicationId] = item._id;
         });
         return Promise.resolve(hashMap);
     }).catch(function (err) {
