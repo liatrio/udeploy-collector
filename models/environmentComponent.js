@@ -4,9 +4,18 @@ var _ = require('lodash'),
 
 
 var EnvironmentComponent = function (data) {
+    this.data = this.prepData(data);
     this.data = this.sanitize(data);
 };
 EnvironmentComponent.prototype.data = {};
+EnvironmentComponent.prototype.prepData = function (data) {
+    data.environmentName = data.environment.name;
+    data.componentName = data.component.name;
+    data.componentVersion = data.version.name;
+    data.deployed = true;
+    data.deployTime = data.date;
+    return data;
+};
 EnvironmentComponent.prototype.sanitize = function (data) {
     data = data || {};
     var schema = schemas.environmentComponent;
