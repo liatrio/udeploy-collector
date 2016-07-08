@@ -57,7 +57,6 @@ var updateCollectorItems = function (collectorItems) {
     ).then(function () {
         return db.find({collectorId: Db.convertToObjectId(collectorId)});
     }).then(function (collectorItems) {
-        //make a hashmap of name and id
         var hashMap = {};
         _.each(collectorItems, function (item) {
             hashMap[item.options.applicationId] = item._id;

@@ -2,8 +2,11 @@
 var http = require('http'),
     Promise = require('promise'),
     _ = require('lodash'),
+    moment = require('moment'),
     requestify = require('requestify'),
     UcdComponent = require('./models/component'),
+    EnvironmentStatus = require('./models/environmentStatus'),
+    EnvironmentComponent = require('./models/environmentComponent'),
     applicationUrl = "rest/deploy/application/",
     ucdServer = process.env.ucdUrl || 'localhost:8080',
     authToken = process.env.authToken,
@@ -11,36 +14,27 @@ var http = require('http'),
     component = require('./models/component'),
     Environment = require('./models/environment'),
     CollectorItem = require('./models/collectorItem'),
-    Ucd = function () {};
+    Ucd = function () {
+    };
 
 
-Ucd.collect = function (collectorId) {
-    var ucd = new Ucd();
-    var collectorItems = [];
-    return ucd.getApplications().then(function (applications) {
-        return Promise.all(
-            _.map(applications, function (application) {
-                var collectorItem = new CollectorItem(application);
-                collectorItem.data._id = collectorId || "1234";
-                collectorItems.push(collectorItem);
-                var environmentsForApplication = [];
-                return ucd.getEnvironmentsForApplication(application.data.id);
-            })
-        ).then(function(data) {
-            //return Promise.all(
-            //    _map(environments,function(environment) {
-            //
-            //    })
-            //);
-            //console.log(data[0]);
-            return Promise.resolve("bam");
-        });
-    }).catch(function (err) {
-        console.log("REST failure", err);
-        return Promise.reject();
-    });
+Ucd.prototype.collect = function (applications) {
+    var obj = this;
+    return Promise.all(
+        _.map(applications, function (application, applicationId) {
+            console.log(applicationId);
+            return obj.getEnvironmentsForApplication(applicationId).then(function (environments) {
+                return Promise.all(
+                    _.map(environments, function (environment) {
+                        return obj.getEnvironmentComponentsAndEnvironmentStatuses(applicationId, environment.data);
+                    })
+                );
+            });
+            //console.log(application)
+        })
+    );
 };
-Ucd.prototype.getCollectorItems = function(collector) {
+Ucd.prototype.getCollectorItems = function (collector) {
     var applications = [];
     return makeUcdGetRequest("cli/" + "application").then(function (response) {
         _.each(response.getBody(), function (application) {
@@ -57,7 +51,6 @@ Ucd.prototype.getCollectorItems = function(collector) {
 };
 
 Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
-    //console.log(applicationId);
     var environments = [];
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     return makeUcdGetRequest(applicationUrl + applicationId + "/environments/false").then(function (response) {
@@ -71,26 +64,11 @@ Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
         return Promise.fail("fail");
     });
 };
-
-Ucd.prototype.getApplications = function () {
-    var applications = [];
-    return makeUcdGetRequest("cli/" + "application").then(function (response) {
-        _.each(response.getBody(), function (application) {
-            var app = new UcdApplication(application);
-            applications.push(app);
-        });
-        //console.log(applications)
-        return Promise.resolve(applications);
-    }).catch(function (err) {
-        console.log("Request failed");
-        console.log(err);
-        return Promise.reject("fail");
-    });
-};
 Ucd.prototype.getComponentsInEnvironment = function (application, environment) {
     var components = [];
     return makeUcdGetRequest("rest/deploy/environment/" + environment.id + "/latestDesiredInventory").then(function (response) {
         _.each(response.getBody(), function (inventory) {
+
             var component = {};
             component.environmentId = environment.id;
             component.environmentName = environment.name;
@@ -107,6 +85,19 @@ Ucd.prototype.getComponentsInEnvironment = function (application, environment) {
         console.log("Request failed");
         console.log(err);
         return Promise.reject("fail");
+    });
+};
+Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applicationId, environment) {
+    return makeUcdGetRequest("rest/deploy/environment/" + environment.id + "/latestDesiredInventory").then(function (response) {
+        var environmentComponents = [];
+        var environmentStatuses = [];
+        _.each(response.getBody(), function (component) {
+            component.asOfData = moment.now();
+            component.collectorItemId = applicationId;
+            environmentComponents.push(new EnvironmentComponent(component))
+            environmentStatuses.push(new EnvironmentStatus(component));
+        });
+        return Promise.resolve({components: environmentComponents, statuses: environmentStatuses});
     });
 };
 
@@ -133,7 +124,7 @@ Ucd.prototype.getEnvironmentResourceStatusData = function (data) {
     });
 
 };
-Ucd.prototype.getServers = function() {
+Ucd.prototype.getServers = function () {
     var ucdServers = [];
     ucdServers[0] = ucdServer;
     return ucdServers;
@@ -151,7 +142,6 @@ var makeUcdGetRequest = function (path) {
         }
     };
     var requestUrl = ucdServer + path;
-    //console.log("Request Url: " + requestUrl);
     return requestify.request(requestUrl, ucdApplicationRequest);
 };
 
