@@ -46,6 +46,16 @@ schemas = {
         environmentName: null,
         componentName: null,
         online: null
+    },
+    environmentComponent: {
+        collectorItemId: null,
+        environmentName: null,
+        environmentUrl: null,
+        componentName: null,
+        componentVersion: null,
+        deployed: null,
+        deployTime: null,
+        asOfDate: null
     }
 };
 
