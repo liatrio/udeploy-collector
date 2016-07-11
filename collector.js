@@ -17,12 +17,10 @@ Collector.prototype.collectAndSave = function () {
         .then(getCollectorItems)
         .then(updateCollectorItems)
         .then(collect)
-        .then(transform)
         .then(save);
 };
 
 var getCollector = function () {
-    console.log("servers: " + dataService.getServers());
     var collector = {};
     collector.name = constants.COLLECTOR_NAME;
     collector.collectorType = constants.COLLECTOR_TYPE;
@@ -61,6 +59,7 @@ var updateCollectorItems = function (collectorItems) {
         _.each(collectorItems, function (item) {
             hashMap[item.options.applicationId] = item._id;
         });
+        console.log(hashMap);
         return Promise.resolve(hashMap);
     }).catch(function (err) {
         console.log("Collector items did not update correctly");
@@ -71,14 +70,17 @@ var updateCollectorItems = function (collectorItems) {
 var collect = function (data) {
     return dataService.collect(data);
 };
-var transform = function () {
 
-    return Promise.resolve();
-};
+var save = function (fields) {
+    var db = null;
+    _.each(fields, function(field) {
+        console.log(field);
+        db = new Db(field.document);
 
-var save = function () {
-    console.log("saving");
-    //var db = new Db(data.document);
+        //_.each(field.data, function(data) {
+        //   console.log(data);
+        //});
+    });
     return Promise.resolve();
     //return db.insertOne(data);
 
