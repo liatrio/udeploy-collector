@@ -11,12 +11,12 @@ var Db = function (document) {
 };
 
 Db.prototype.upsertByName = function (data) {
-    console.log("Upserting: ", data);
+    //console.log("Upserting: ", data);
     return this.connection.update({name: data.name }, data, {upsert: true});
 };
 
 Db.prototype.insertOne = function (data) {
-    console.log("Inserting one:", data);
+    //console.log("Inserting one:", data);
     return this.connection.insert(data).then(function (result) {
         return Promise.resolve( {id: result._id} );
     }).catch(function (err) {
@@ -39,7 +39,7 @@ Db.prototype.upsert = function ( where, content ) {
     });
 };
 Db.prototype.delete = function (data) {
-    console.log("Deleting where: ", data);
+    //console.log("Deleting where: ", data);
     return this.connection.remove(data).catch(function (err) {
         console.log("Well...something went wrong");
         return Promise.reject(err);
@@ -48,14 +48,12 @@ Db.prototype.delete = function (data) {
 };
 
 Db.prototype.findOne = function (data) {
-    console.log("Find one where: ", data);
     return this.connection.findOne(data).catch(function (err) {
         console.log("Find one db method failed");
         return Promise.reject(err);
     });
 };
 Db.prototype.find = function (data) {
-    console.log("Find all where: ", data);
     return this.connection.find(data).then(function(result) {
         return Promise.resolve(result);
     }).catch(function (err) {
