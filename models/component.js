@@ -4,8 +4,7 @@ var _ = require('lodash'),
 
 var Component = function (data) {
     this.data = this.prepData(data);
-    this.data = this.sanitize(this.data);
-    console.log(this.data);
+    this.data = this.sanitize(data);
 };
 Component.prototype.data = {};
 
@@ -14,7 +13,7 @@ Component.prototype.prepData = function (data) {
     data.version = data.version.name;
     data.environmentId = data.environment.environmentId;
     data.environmentName = data.environment.name;
-    data.deployed = data.compliancy.desiredCount == data.compliancy.missingCount;
+    //data.deployed = data.compliancy.desiredCount == data.compliancy.missingCount;
     data.asOfDate = data.date;
     return data;
 };
