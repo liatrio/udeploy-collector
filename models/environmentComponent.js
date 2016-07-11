@@ -18,7 +18,7 @@ EnvironmentComponent.prototype.prepData = function (data) {
 };
 EnvironmentComponent.prototype.sanitize = function (data) {
     data = data || {};
-    var schema = schemas.environmentComponent;
+    var schema = schemas.environmentComponents;
     return _.pick(_.defaults(data, schema), _.keys(schema));
 };
 

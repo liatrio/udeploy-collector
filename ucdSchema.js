@@ -47,7 +47,7 @@ schemas = {
         componentName: null,
         online: null
     },
-    environmentComponent: {
+    environmentComponents: {
         collectorItemId: null,
         environmentName: null,
         environmentUrl: null,
