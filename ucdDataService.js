@@ -10,12 +10,10 @@ var http = require('http'),
     applicationUrl = "rest/deploy/application/",
     ucdServer = process.env.ucdUrl || 'localhost:8080',
     authToken = process.env.authToken,
-    UcdApplication = require('./models/application'),
     component = require('./models/component'),
     Environment = require('./models/environment'),
     CollectorItem = require('./models/collectorItem'),
-    Ucd = function () {
-    };
+    Ucd = function () {};
 
 
 Ucd.prototype.collect = function (applications) {
@@ -28,9 +26,20 @@ Ucd.prototype.collect = function (applications) {
                     _.map(environments, function (environment) {
                         return obj.getEnvironmentComponentsAndEnvironmentStatuses(applicationId, environment.data);
                     })
-                );
+                ).then(function(components) {
+                    var environementStatuses = [];
+                    var environmentComponents = [];
+                    _.each(components,function(component) {
+                        environmentComponents = _.concat(component.components, environmentComponents);
+                        environementStatuses = _.concat(component.statuses, environementStatuses);
+                    });
+                    var saveObj = [
+                        { document: "environment_components", data: environmentComponents },
+                        { document: "environment_status", data: environementStatuses }
+                    ];
+                    return Promise.resolve(saveObj);
+                });
             });
-            //console.log(application)
         })
     );
 };
@@ -41,7 +50,9 @@ Ucd.prototype.getCollectorItems = function (collector) {
             application.collectorId = collector._id;
             var app = new CollectorItem(application);
             app.data.options.instanceUrl = ucdServer;
-            applications.push(app);
+            console.log("application Name", app.data.options.applicationName);
+            if(app.data.options.applicationName == 'AEM')
+                applications.push(app);
         });
         return Promise.resolve(applications);
     }).catch(function (err) {
@@ -94,7 +105,7 @@ Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applica
         _.each(response.getBody(), function (component) {
             component.asOfData = moment.now();
             component.collectorItemId = applicationId;
-            environmentComponents.push(new EnvironmentComponent(component))
+            environmentComponents.push(new EnvironmentComponent(component));
             environmentStatuses.push(new EnvironmentStatus(component));
         });
         return Promise.resolve({components: environmentComponents, statuses: environmentStatuses});
