@@ -11,7 +11,6 @@ var CollectorItem = function (data) {
 CollectorItem.prototype.data = {};
 
 CollectorItem.prototype.prepData = function(data) {
-    //console.log(data);
     data.options = {};
     data.options.applicationId = data.id;
     data.options.applicationName = data.name;
