@@ -27,15 +27,15 @@ Ucd.prototype.collect = function (applications) {
                         return obj.getEnvironmentComponentsAndEnvironmentStatuses(applicationId, environment.data);
                     })
                 ).then(function(components) {
-                    var environementStatuses = [];
+                    var environmentStatuses = [];
                     var environmentComponents = [];
                     _.each(components,function(component) {
                         environmentComponents = _.concat(component.components, environmentComponents);
-                        environementStatuses = _.concat(component.statuses, environementStatuses);
+                        environmentStatuses = _.concat(component.statuses, environmentStatuses);
                     });
                     var saveObj = [
                         { document: "environment_components", data: environmentComponents },
-                        { document: "environment_status", data: environementStatuses }
+                        { document: "environment_status", data: environmentStatuses }
                     ];
                     return Promise.resolve(saveObj);
                 });
