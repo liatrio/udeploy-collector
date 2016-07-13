@@ -71,18 +71,25 @@ var collect = function (data) {
     return dataService.collect(data);
 };
 
-var save = function (fields) {
+var save = function (collection) {
     var db = null;
-    _.each(fields, function(field) {
-        console.log(field);
-        db = new Db(field.document);
-
-        //_.each(field.data, function(data) {
-        //   console.log(data);
-        //});
+    _.each(collection, function(subCollection) {
+        _.each(subCollection, function(collectedItems) {
+            db = new Db(collectedItems.document);
+            _.each(collectedItems.data,function(item) {
+                db.upsert(
+                    {
+                        collectorItemId: item.data.collectorItemId,
+                        environmentName: item.data.environmentName,
+                        componentName: item.data.componentName
+                    },
+                    item.data
+                ).then(function(err) {
+                    return Promise.reject("Db error", err);
+                });
+            });
+        });
     });
     return Promise.resolve();
-    //return db.insertOne(data);
-
 };
 module.exports = Collector;
