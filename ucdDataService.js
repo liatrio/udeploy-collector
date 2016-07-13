@@ -4,7 +4,6 @@ var http = require('http'),
     _ = require('lodash'),
     moment = require('moment'),
     requestify = require('requestify'),
-    UcdComponent = require('./models/component'),
     EnvironmentStatus = require('./models/environmentStatus'),
     EnvironmentComponent = require('./models/environmentComponent'),
     applicationUrl = "rest/deploy/application/",
@@ -75,29 +74,6 @@ Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
         return Promise.fail("fail");
     });
 };
-Ucd.prototype.getComponentsInEnvironment = function (application, environment) {
-    var components = [];
-    return makeUcdGetRequest("rest/deploy/environment/" + environment.id + "/latestDesiredInventory").then(function (response) {
-        _.each(response.getBody(), function (inventory) {
-
-            var component = {};
-            component.environmentId = environment.id;
-            component.environmentName = environment.name;
-            component.environmentUrl = application.instanceUrl || ucdServer + "/#environment/" + environment.id;
-            component.id = inventory.component.id;
-            component.name = inventory.component.name;
-            component.version = inventory.version.name;
-            component.deployed = inventory.compliancy.desiredCount;
-            component.date = inventory.date;
-            components.push(component);
-        });
-        return Promise.resolve(components);
-    }).catch(function (err) {
-        console.log("Request failed");
-        console.log(err);
-        return Promise.reject("fail");
-    });
-};
 Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applicationId, environment) {
     return makeUcdGetRequest("rest/deploy/environment/" + environment.id + "/latestDesiredInventory").then(function (response) {
         var environmentComponents = [];
@@ -116,29 +92,6 @@ Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applica
     });
 };
 
-Ucd.prototype.getEnvironmentResourceStatusData = function (data) {
-    if (_.isEmpty(data) || !_.isString())
-        throw new Error("Missing Required fields: ");
-
-    var application = data.application;
-    var environment = data.environment;
-    var environmentStatuses = [];
-
-    var componentInformationPath = "rest/deploy/environment/" + environment.id + "/latestDesiredInventory";
-    return makeUcdGetRequest(componentInformationPath).then(function (response) {
-        _.each(response.getBody(), function (component) {
-            var status = new UcdComponent(component);
-            environmentStatuses.push(status);
-        });
-        //console.log(environmentStatuses);
-        return Promise.resolve(environmentStatuses);
-    }).catch(function (err) {
-        console.log("Request failed");
-        console.log(err);
-        return Promise.reject("fail");
-    });
-
-};
 Ucd.prototype.getServers = function () {
     var ucdServers = [];
     ucdServers[0] = ucdServer;
