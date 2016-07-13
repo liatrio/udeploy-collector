@@ -103,8 +103,12 @@ Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applica
         var environmentComponents = [];
         var environmentStatuses = [];
         _.each(response.getBody(), function (component) {
-            component.asOfData = moment.now();
+            var isOnlineAndDeployed = component.compliancy.missingCount == 0;
+            component.environmentUrl = ucdServer + "/#environment/" + component.environment.id;
+            component.asOfDate = moment.now();
             component.collectorItemId = applicationId;
+            component.deployed = isOnlineAndDeployed;
+            component.online = isOnlineAndDeployed;
             environmentComponents.push(new EnvironmentComponent(component));
             environmentStatuses.push(new EnvironmentStatus(component));
         });
