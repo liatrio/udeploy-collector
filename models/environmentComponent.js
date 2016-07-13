@@ -12,7 +12,6 @@ EnvironmentComponent.prototype.prepData = function (data) {
     data.environmentName = data.environment.name;
     data.componentName = data.component.name;
     data.componentVersion = data.version.name;
-    data.deployed = true;
     data.deployTime = data.date;
     return data;
 };
