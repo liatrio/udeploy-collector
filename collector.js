@@ -90,6 +90,6 @@ var save = function (collection) {
             });
         });
     });
-    return Promise.resolve();
+    return Promise.resolve(true);
 };
 module.exports = Collector;
