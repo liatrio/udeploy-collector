@@ -10,12 +10,14 @@ Hygieia comes with a udeploy collector, but it relies on Urban Code Deploy insta
 
 To use:
 
+        nvm use v0.10.42
         npm install --production
         node server.js
 
 
  To develop, use in dev mode.
 
+        nvm use v0.10.42
         npm install
         node server.js
 Tests:
