@@ -5,6 +5,8 @@ var CronJob = require('cron').CronJob,
 
     new CronJob('10 * * * *', function() {
         console.log("Start collecting");
-        new Collector().collectAndSave();
+        new Collector().collectAndSave().then(function() {
+           return true;
+        });
 
     }, null, true, 'America/Los_Angeles');
