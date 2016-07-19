@@ -15,8 +15,8 @@ CollectorItem.prototype.prepData = function(data) {
     data.options.applicationId = data.id;
     data.options.applicationName = data.name;
     data.description = data.name;
-    data.enabled = true;
-    data.pushed = true;
+    data.enabled = false;
+    data.pushed = false;
     data.instanceUrl =  process.env.ucdUrl;
     return data;
 };
