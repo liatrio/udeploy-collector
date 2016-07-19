@@ -19,11 +19,11 @@ Ucd.prototype.collect = function (applications) {
     var obj = this;
     return Promise.all(
         _.map(applications, function (application, applicationId) {
-            console.log(applicationId);
+            console.log(application);
             return obj.getEnvironmentsForApplication(applicationId).then(function (environments) {
                 return Promise.all(
                     _.map(environments, function (environment) {
-                        return obj.getEnvironmentComponentsAndEnvironmentStatuses(applicationId, environment.data);
+                        return obj.getEnvironmentComponentsAndEnvironmentStatuses(applicationId, environment.data, application);
                     })
                 ).then(function(components) {
                     var environmentStatuses = [];
@@ -32,6 +32,8 @@ Ucd.prototype.collect = function (applications) {
                         environmentComponents = _.concat(component.components, environmentComponents);
                         environmentStatuses = _.concat(component.statuses, environmentStatuses);
                     });
+                    environmentComponents = _.slice(environmentComponents,0,10);
+                    environmentStatuses = _.slice(environmentStatuses,0,10);
                     var saveObj = [
                         { document: "environment_components", data: environmentComponents },
                         { document: "environment_status", data: environmentStatuses }
@@ -74,7 +76,7 @@ Ucd.prototype.getEnvironmentsForApplication = function (applicationId) {
         return Promise.fail("fail");
     });
 };
-Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applicationId, environment) {
+Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applicationId, environment, collectorItemId) {
     return makeUcdGetRequest("rest/deploy/environment/" + environment.id + "/latestDesiredInventory").then(function (response) {
         var environmentComponents = [];
         var environmentStatuses = [];
@@ -82,7 +84,7 @@ Ucd.prototype.getEnvironmentComponentsAndEnvironmentStatuses = function (applica
             var isOnlineAndDeployed = component.compliancy.missingCount == 0;
             component.environmentUrl = ucdServer + "/#environment/" + component.environment.id;
             component.asOfDate = moment.now();
-            component.collectorItemId = applicationId;
+            component.collectorItemId = collectorItemId;
             component.deployed = isOnlineAndDeployed;
             component.online = isOnlineAndDeployed;
             environmentComponents.push(new EnvironmentComponent(component));
